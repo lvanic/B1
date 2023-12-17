@@ -1,0 +1,42 @@
+﻿@model List<B1.DataLayer.Models.TurnoverSheetModel>;
+@{
+    string? currentClass = null;
+}
+
+<div>Sheets</div>
+@foreach(var sheet in Model)
+{
+    <div>@sheet.CompanyName</div>
+    <div>@sheet.TurnoverSheetName</div>
+    <div>@sheet.PeriodName</div>
+    <div>@sheet.TargetName</div>
+    <div>@sheet.CreationDate</div>
+    <div>@sheet.EntityName</div>
+    <div style="display:flex; flex-direction:row">
+        <div>AccountingId</div>
+        <div>InputBalance.Asset</div>
+        <div>InputBalance.Liability</div>
+        <div>Turnover.Debit</div>
+        <div>Turnover.Credit</div>
+        <div>OutputBalance.Asset</div>
+        <div>OutputBalance.Liability</div>
+    </div>
+
+    @foreach (var line in sheet.TurnoverLines)
+    {
+        if(currentClass == null || currentClass != line.LineClass.Name)
+        {
+            currentClass = line.LineClass.Name;
+            <div>@currentClass</div>
+        }
+        <div style="display:flex; flex-direction:row">
+            <div>@line.AccountingId</div>
+            <div>@line.InputBalance.Asset</div>
+            <div>@line.InputBalance.Liability</div>
+            <div>@line.Turnover.Debit</div>
+            <div>@line.Turnover.Credit</div>
+            <div>@line.OutputBalance.Asset</div>
+            <div>@line.OutputBalance.Liability</div>
+        </div>
+    }
+}
