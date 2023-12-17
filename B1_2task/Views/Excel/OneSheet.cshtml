@@ -1,0 +1,79 @@
+﻿@model B1.DataLayer.Models.TurnoverSheetModel;
+@{
+    string? currentClass = null;
+}
+<style>
+    /* Пример стилей для границ таблицы */
+    table {
+        border-collapse: collapse;
+        width: 100%;
+        table-layout: fixed;
+        text-align: center;
+    }
+
+    th, td {
+        border: 1px solid black;
+        padding: 8px;
+        text-align: left;
+        width: 100%;
+        align-items: center;
+        justify-items: center;
+        text-align: center;
+    }
+
+    th {
+        background-color: #f2f2f2;
+        width: 100%;
+        text-align: center;
+    }
+
+</style>
+
+<a href="/Excel">Back</a>
+<div>@Model.CompanyName</div>
+<div>@Model.TurnoverSheetName</div>
+<div>@Model.PeriodName</div>
+<div>@Model.TargetName</div>
+<div>@Model.CreationDate</div>
+<div>@Model.EntityName</div>
+
+    <table>
+        <tr>
+            <th rowspan="2">Б/сч</th>
+            <th colspan="2">Входящее сальдо</th>
+            <th colspan="2">Обороты</th>
+            <th colspan="2">Исходящее сальдо</th>
+        </tr>
+        <tr>
+            <th>Актив</th>
+            <th>Пассив</th>
+            <th>Дебет</th>
+            <th>Кредит</th>
+            <th>Актив</th>
+            <th>Пассив</th>
+        </tr>
+    @foreach (var line in Model.TurnoverLines)
+        {
+            if (currentClass == null || currentClass != line.LineClass.Name)
+            {
+                currentClass = line.LineClass.Name;
+                <tr>
+                    <td colspan="7">
+                        <b>
+                            @currentClass
+                        </b>
+                    </td>
+                </tr>
+            }
+            <tr>
+                <td>@line.AccountingId</td>
+                <td>@line.InputBalance.Asset</td>
+                <td>@line.InputBalance.Liability</td>
+                <td>@line.Turnover.Debit</td>
+                <td>@line.Turnover.Credit</td>
+                <td>@line.OutputBalance.Asset</td>
+                <td>@line.OutputBalance.Liability</td>
+            </tr>
+        }
+    </table>
+}
