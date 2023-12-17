@@ -11,11 +11,14 @@ namespace B1_2task.Controllers
     {
         private readonly AppDbContext _appDbContext;
         private readonly ExcelParser _excelParser;
+        private readonly PdfGenerator _pdfGenerator;
         public ExcelController(AppDbContext appDbContext)
         {
             _appDbContext = appDbContext;
             _excelParser = new ExcelParser();
+            _pdfGenerator = new PdfGenerator();
         }
+
         [HttpGet]
         public async Task<IActionResult> Index()
         {
@@ -32,29 +35,32 @@ namespace B1_2task.Controllers
                 .ToListAsync();
             return View(sheets);
         }
+
         [HttpGet("Excel/{id}")]
         public async Task<IActionResult> Index(int id)
         {
             var sheet = await _appDbContext.TurnoverSheets
-                .Include(x => x.TurnoverLines)
-                .ThenInclude(x => x.LineClass)
-                .Include(x => x.TurnoverLines)
-                .ThenInclude(x => x.InputBalance)
-                .Include(x => x.TurnoverLines)
-                .ThenInclude(x => x.Turnover)
-                .Include(x => x.TurnoverLines)
-                .ThenInclude(x => x.OutputBalance)
-                .Include(x => x.TurnoverLines)
-                .FirstOrDefaultAsync(x => x.Id == id);
+               .Include(x => x.TurnoverLines)
+               .ThenInclude(x => x.LineClass)
+               .Include(x => x.TurnoverLines)
+               .ThenInclude(x => x.InputBalance)
+               .Include(x => x.TurnoverLines)
+               .ThenInclude(x => x.Turnover)
+               .Include(x => x.TurnoverLines)
+               .ThenInclude(x => x.OutputBalance)
+               .Include(x => x.TurnoverLines)
+               .FirstOrDefaultAsync(x => x.Id == id);
 
             return View("OneSheet", sheet);
         }
+
         [HttpGet("Excel/Upload")]
         public async Task<IActionResult> Upload()
         {
             return View("Upload");
         }
-        [HttpPost]
+
+        [HttpPost("Excel/Upload")]
         public async Task<IActionResult> Upload(IFormFile file)
         {
             if (file == null || file.Length == 0)
@@ -62,7 +68,6 @@ namespace B1_2task.Controllers
                 ViewBag.Message = "Please select a file";
                 return View();
             }
-
             try
             {
                 using MemoryStream memoryStream = new();
@@ -89,6 +94,26 @@ namespace B1_2task.Controllers
             }
 
             return View("/Excel");
+        }
+
+        [HttpGet("Excel/{id}/Download")]
+        public async Task<IActionResult> Download(int id)
+        {
+            var sheet = await _appDbContext.TurnoverSheets
+                .Include(x => x.TurnoverLines)
+                .ThenInclude(x => x.LineClass)
+                .Include(x => x.TurnoverLines)
+                .ThenInclude(x => x.InputBalance)
+                .Include(x => x.TurnoverLines)
+                .ThenInclude(x => x.Turnover)
+                .Include(x => x.TurnoverLines)
+                .ThenInclude(x => x.OutputBalance)
+                .Include(x => x.TurnoverLines)
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            var documentBytes = _pdfGenerator.GeneratePdfBytes(sheet);
+
+            return File(documentBytes, "application/pdf");
         }
     }
 }

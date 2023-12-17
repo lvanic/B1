@@ -9,6 +9,8 @@
   <ItemGroup>
     <PackageReference Include="EPPlus" Version="7.0.4" />
     <PackageReference Include="ExcelLibrary" Version="1.2011.7.31" />
+    <PackageReference Include="iTextSharp" Version="5.5.13.3" />
+    <PackageReference Include="Microsoft.TeamFoundationServer.ExtendedClient" Version="16.205.1" />
   </ItemGroup>
 
   <ItemGroup>
